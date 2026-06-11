@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>해보는 언니 — 슬라이드 대시보드 사용 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+  background: #FBF6F0;
+  color: #2C2C2C;
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+}
+
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.header-badge {
+  display: inline-block;
+  background: #E0877B;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 5px 16px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.header-title {
+  font-size: 32px;
+  font-weight: 900;
+  color: #2C2C2C;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.header-title em {
+  color: #C4956A;
+  font-style: normal;
+}
+.header-sub {
+  font-size: 15px;
+  color: #7A6A5A;
+  line-height: 1.6;
+}
+
+/* 메인 플로우 */
+.flow-section {
+  margin-bottom: 3rem;
+}
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #C4956A;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #E8DDD4;
+}
+
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.step {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+
+.step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 48px;
+}
+.step-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #C4956A;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.step-num.alt { background: #E0877B; }
+.step-line {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(to bottom, #C4956A, #E8DDD4);
+  min-height: 32px;
+  margin: 0;
+}
+.step:last-child .step-line { display: none; }
+
+.step-body {
+  flex: 1;
+  padding-bottom: 2rem;
+}
+.step-tool {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #A08060;
+  background: #F0E8DC;
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.step-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2C2C2C;
+  margin-bottom: 6px;
+}
+.step-desc {
+  font-size: 14px;
+  color: #6A5A4A;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.step-card {
+  background: #fff;
+  border: 1px solid #E8DDD4;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.step-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #A08060;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.step-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #4A3A2A;
+  line-height: 1.5;
+}
+.step-item-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #C4956A;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+/* 대시보드 선택 안내 */
+.select-guide {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+.select-box {
+  background: #FBF6F0;
+  border: 1.5px solid #E8DDD4;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+.select-box-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #C4956A;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+}
+.select-box-title { font-size: 13px; font-weight: 700; color: #2C2C2C; margin-bottom: 3px; }
+.select-box-sub { font-size: 11px; color: #8A7A6A; }
+
+/* 레퍼런스 보관함 */
+.ref-guide {
+  background: #fff;
+  border: 1px solid #E8DDD4;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-top: 12px;
+}
+.ref-flow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ref-step {
+  background: #F7EDE0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #7A5A3A;
+  font-weight: 500;
+  text-align: center;
+}
+.ref-arrow {
+  color: #C4956A;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* 팁 섹션 */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.tip-card {
+  background: #fff;
+  border: 1px solid #E8DDD4;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.tip-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.tip-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2C2C2C;
+  margin-bottom: 5px;
+}
+.tip-desc {
+  font-size: 12px;
+  color: #6A5A4A;
+  line-height: 1.6;
+}
+.tip-tag {
+  display: inline-block;
+  background: #F7EDE0;
+  color: #A07040;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+
+/* 컬러 팔레트 미리보기 */
+.palette-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.palette-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #E8DDD4;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.palette-swatches {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+.palette-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2C2C2C;
+  width: 90px;
+  flex-shrink: 0;
+}
+.palette-use {
+  font-size: 12px;
+  color: #8A7A6A;
+}
+
+/* 푸터 */
+.footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #E8DDD4;
+}
+.footer-brand {
+  font-size: 20px;
+  font-weight: 900;
+  color: #C4956A;
+  margin-bottom: 6px;
+}
+.footer-sub {
+  font-size: 13px;
+  color: #A08060;
+}
+
+@media (max-width: 600px) {
+  .select-guide { grid-template-columns: 1fr; }
+  .tips-grid { grid-template-columns: 1fr; }
+  .header-title { font-size: 24px; }
+  .ref-flow { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-badge">USAGE GUIDE</div>
+    <div class="header-title"><em>해보는 언니</em> 슬라이드 대시보드<br>사용 가이드</div>
+    <div class="header-sub">대시보드에서 선택만 하면 Claude가 바로 슬라이드를 만들어드려요.<br>처음이라도 3분이면 충분해요.</div>
+  </div>
+
+  <!-- 기본 워크플로우 -->
+  <div class="flow-section">
+    <div class="section-label">BASIC WORKFLOW</div>
+    <div class="flow-steps">
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-tool">NotebookLM</div>
+          <div class="step-title">강의 내용 준비</div>
+          <div class="step-desc">NotebookLM에서 강의 주제를 정리하고 보고서/문서 형식으로 출력해요.</div>
+          <div class="step-card">
+            <div class="step-card-title">이렇게 활용해요</div>
+            <div class="step-items">
+              <div class="step-item"><div class="step-item-dot"></div>강의 소스 자료를 NotebookLM에 업로드</div>
+              <div class="step-item"><div class="step-item-dot"></div>학습 가이드 또는 문서 형식으로 출력 요청</div>
+              <div class="step-item"><div class="step-item-dot"></div>출력된 내용을 복사해서 메모장에 임시 보관</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-tool">대시보드</div>
+          <div class="step-title">용도 · 세트 · 팔레트 선택</div>
+          <div class="step-desc">대시보드에서 세 가지를 순서대로 선택하면 복사 버튼이 활성화돼요.</div>
+          <div class="select-guide">
+            <div class="select-box">
+              <div class="select-box-num">①</div>
+              <div class="select-box-title">용도 선택</div>
+              <div class="select-box-sub">강의자료 / 공모전 / 제안서</div>
+            </div>
+            <div class="select-box">
+              <div class="select-box-num">②</div>
+              <div class="select-box-title">세트 선택</div>
+              <div class="select-box-sub">A~E 중 스타일 선택</div>
+            </div>
+            <div class="select-box">
+              <div class="select-box-num">③</div>
+              <div class="select-box-title">팔레트 선택</div>
+              <div class="select-box-sub">무드에 맞는 컬러</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-tool">대시보드</div>
+          <div class="step-title">프롬프트 복사</div>
+          <div class="step-desc">우측 상단의 <strong>용도 + 세트 + 팔레트 복사</strong> 버튼을 클릭하면 슬라이드 제작 가이드가 클립보드에 복사돼요.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num alt">4</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-tool">Claude</div>
+          <div class="step-title">Claude에 붙여넣기</div>
+          <div class="step-desc">복사한 가이드 + NotebookLM에서 정리한 내용을 함께 붙여넣으면 Claude가 HTML 슬라이드를 생성해요.</div>
+          <div class="step-card">
+            <div class="step-card-title">붙여넣기 순서</div>
+            <div class="step-items">
+              <div class="step-item"><div class="step-item-dot"></div>복사한 슬라이드 가이드 먼저 붙여넣기</div>
+              <div class="step-item"><div class="step-item-dot"></div>NotebookLM에서 정리한 강의 내용 추가</div>
+              <div class="step-item"><div class="step-item-dot"></div>추가 요청사항 있으면 마지막에 덧붙이기</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num alt">5</div>
+        </div>
+        <div class="step-body">
+          <div class="step-tool">완성</div>
+          <div class="step-title">HTML 슬라이드 완성</div>
+          <div class="step-desc">Claude가 브랜드 시스템이 적용된 HTML 슬라이드 파일을 생성해요. 다운로드 후 Chrome에서 바로 열어서 사용하거나 수정 요청을 추가로 드릴 수 있어요.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 레퍼런스 보관함 -->
+  <div class="flow-section">
+    <div class="section-label">레퍼런스 보관함 사용법</div>
+    <div class="ref-guide">
+      <div class="ref-flow">
+        <div class="ref-step">① 마음에 드는<br>PPT 발견</div>
+        <div class="ref-arrow">→</div>
+        <div class="ref-step">② 화면 캡처<br>(Ctrl+Shift+S)</div>
+        <div class="ref-arrow">→</div>
+        <div class="ref-step">③ 대시보드에서<br>Ctrl+V 붙여넣기</div>
+        <div class="ref-arrow">→</div>
+        <div class="ref-step">④ 프롬프트 생성<br>버튼 클릭</div>
+        <div class="ref-arrow">→</div>
+        <div class="ref-step">⑤ 생성된 프롬프트<br>복사 후 Claude에 사용</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 컬러 팔레트 -->
+  <div class="flow-section">
+    <div class="section-label">컬러 팔레트 선택 가이드</div>
+    <div class="palette-row">
+      <div class="palette-bar">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#C4956A"></div>
+          <div class="swatch" style="background:#F7EDE0"></div>
+          <div class="swatch" style="background:#E0877B"></div>
+        </div>
+        <div class="palette-name">머스터드</div>
+        <div class="palette-use">해보는 언니 채널 · 브랜드 콘텐츠</div>
+      </div>
+      <div class="palette-bar">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#4A9090"></div>
+          <div class="swatch" style="background:#E0F0F0"></div>
+          <div class="swatch" style="background:#E0877B"></div>
+        </div>
+        <div class="palette-name">소프트 틸</div>
+        <div class="palette-use">세련된 강의 · 포트폴리오</div>
+      </div>
+      <div class="palette-bar">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#3D6B5E"></div>
+          <div class="swatch" style="background:#E0EDEA"></div>
+          <div class="swatch" style="background:#E0877B"></div>
+        </div>
+        <div class="palette-name">포레스트 그린</div>
+        <div class="palette-use">평생교육원 · 지역 강의</div>
+      </div>
+      <div class="palette-bar">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#5B7FA6"></div>
+          <div class="swatch" style="background:#E0EAF4"></div>
+          <div class="swatch" style="background:#E0877B"></div>
+        </div>
+        <div class="palette-name">더스티 블루</div>
+        <div class="palette-use">공공기관 · 디지털배움터</div>
+      </div>
+      <div class="palette-bar">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#2C2C2C"></div>
+          <div class="swatch" style="background:#EFEFEF"></div>
+          <div class="swatch" style="background:#E0877B"></div>
+        </div>
+        <div class="palette-name">차콜</div>
+        <div class="palette-use">공식 제안서 · 공모전</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 팁 -->
+  <div class="flow-section">
+    <div class="section-label">알아두면 좋은 팁</div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🎯</div>
+        <div class="tip-title">코랄은 1곳만</div>
+        <div class="tip-desc">모든 팔레트에 공통 포인트 컬러(#E0877B)가 적용돼요. 슬라이드당 딱 1곳에만 써야 시선이 집중돼요.</div>
+        <div class="tip-tag">디자인 원칙</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📝</div>
+        <div class="tip-title">1슬라이드 = 1메시지</div>
+        <div class="tip-desc">텍스트를 최소화하고 키워드 위주로 구성해요. 여백을 넉넉하게 주면 훨씬 깔끔하게 보여요.</div>
+        <div class="tip-tag">구성 원칙</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🔄</div>
+        <div class="tip-title">수정 요청도 쉬워요</div>
+        <div class="tip-desc">슬라이드 생성 후 "3번 슬라이드 배경색을 더 밝게 해줘" 처럼 구체적으로 요청하면 바로 수정돼요.</div>
+        <div class="tip-tag">활용 팁</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">💡</div>
+        <div class="tip-title">세트 E가 인기 많아요</div>
+        <div class="tip-desc">기하학 패턴(세트 E)이 강의 자료와 공모전 모두에서 호평을 받았어요. 처음이라면 세트 E로 시작해보세요.</div>
+        <div class="tip-tag">추천</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-brand">해보는 언니</div>
+    <div class="footer-sub">몰랐지만 해봤고, 해봤으니까 쉬운 말로 전해드릴 수 있어요.</div>
+  </div>
+
+</div>
+</body>
+</html>
