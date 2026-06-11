@@ -3,671 +3,389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>해보는 언니 — 슬라이드 가이드 대시보드</title>
+<title>해보는 언니 — 슬라이드 가이드</title>
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f9f9f9; padding: 2rem 1.5rem; }
 
-  :root {
-    --ink: #1A1A1A; --body: #4A4A4A; --muted: #ADADAD;
-    --line: #E4E4E4; --bg: #FFFFFF; --soft: #F7F7F6;
-    --coral: #E0877B; --coral-light: #F1CFC5;
-  }
+.db-wrap { max-width: 960px; margin: 0 auto; }
+.db-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+.db-title { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+.db-subtitle { font-size: 13px; color: #888; margin-top: 4px; }
 
-  body {
-    font-family: 'Pretendard', -apple-system, sans-serif;
-    background: #E8E8E6;
-    min-height: 100vh;
-    padding: 40px 32px 60px;
-    display: flex; flex-direction: column;
-    gap: 24px; align-items: center;
-  }
+.copy-btn-main {
+  background: #C4956A; color: #fff; border: none; border-radius: 8px;
+  padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  opacity: 0.4; transition: opacity 0.2s, transform 0.1s; font-family: inherit;
+}
+.copy-btn-main.active { opacity: 1; }
+.copy-btn-main:active { transform: scale(0.97); }
 
-  /* 헤더 */
-  .header {
-    width: 100%; max-width: 1100px;
-    display: flex; align-items: flex-end; justify-content: space-between;
-  }
+.storage-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; color: #999; background: #f0f0f0;
+  padding: 3px 10px; border-radius: 20px; margin-top: 6px;
+}
+.storage-dot { width: 6px; height: 6px; border-radius: 50%; background: #aaa; }
+.storage-dot.ok { background: #5db872; }
 
-  .header h1 { font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; margin-bottom: 4px; }
-  .header p { font-size: 12px; color: var(--muted); }
+.status-bar {
+  display: flex; gap: 1rem; align-items: center;
+  padding: 10px 14px; background: #f0f0f0;
+  border-radius: 8px; margin-bottom: 1.5rem;
+  font-size: 13px; color: #666;
+}
+.status-item { display: flex; align-items: center; gap: 6px; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; }
+.status-dot.selected { background: #C4956A; }
+.status-sep { color: #ccc; }
+.status-hint { margin-left: auto; font-size: 12px; color: #aaa; }
 
-  /* 복사 버튼 */
-  .copy-btn {
-    display: flex; align-items: center; gap: 8px;
-    padding: 11px 22px; background: var(--ink); color: #fff;
-    font-size: 13px; font-weight: 700; border: none; border-radius: 8px;
-    cursor: pointer; transition: all 0.15s; white-space: nowrap;
-  }
-  .copy-btn:hover { background: #333; }
-  .copy-btn:disabled { background: #C8C8C6; cursor: not-allowed; }
-  .copy-btn.done { background: #3D6B5E; }
+.section { margin-bottom: 1.5rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.section-title { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+.section-hint { font-size: 12px; color: #aaa; }
 
-  /* 상태 바 */
-  .status-bar {
-    width: 100%; max-width: 1100px; background: var(--bg);
-    border-radius: 10px; padding: 12px 24px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
-  }
-  .status-left { display: flex; align-items: center; gap: 20px; }
-  .status-item { display: flex; align-items: center; gap: 8px; }
-  .status-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .status-value { font-size: 13px; font-weight: 600; color: var(--ink); }
-  .status-value.empty { color: var(--muted); font-weight: 400; font-style: italic; }
-  .status-sep { width: 1px; height: 20px; background: var(--line); }
-  .status-hint { font-size: 11px; color: var(--muted); }
+.purpose-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.purpose-card {
+  border: 1px solid #e5e5e5; border-radius: 12px;
+  padding: 14px 16px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  background: #fff;
+}
+.purpose-card:hover { border-color: #C4956A; background: #FDF7F2; }
+.purpose-card.selected { border-color: #C4956A; background: #FDF7F2; border-width: 2px; }
+.purpose-badge { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.badge-label { font-size: 11px; font-weight: 500; color: #C4956A; background: #F7EDE0; padding: 2px 8px; border-radius: 20px; }
+.badge-count { font-size: 11px; color: #aaa; }
+.purpose-title { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.purpose-desc { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+.purpose-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { font-size: 11px; color: #666; background: #f5f5f5; padding: 2px 8px; border-radius: 20px; border: 1px solid #e5e5e5; }
+.tag.mood { color: #5B7FA6; background: #EEF3F9; border-color: #C5D5E8; }
 
-  /* 패널 공통 */
-  .panel { background: var(--bg); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-  .panel-head { padding: 13px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
-  .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-  .panel-hint { font-size: 11px; color: var(--muted); }
+.main-grid { display: grid; grid-template-columns: 1fr 220px; gap: 16px; }
 
-  /* ── 용도 선택 ── */
-  .purpose-panel { width: 100%; max-width: 1100px; }
+.set-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.set-card {
+  border: 1px solid #e5e5e5; border-radius: 8px;
+  padding: 10px; cursor: pointer; transition: border-color 0.15s;
+  background: #fff;
+}
+.set-card:hover { border-color: #C4956A; }
+.set-card.selected { border-color: #C4956A; border-width: 2px; }
+.set-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+.set-num { font-size: 10px; color: #aaa; margin-bottom: 2px; }
+.set-name { font-size: 12px; font-weight: 500; color: #1a1a1a; margin-bottom: 2px; }
+.set-desc { font-size: 11px; color: #888; line-height: 1.4; }
 
-  .purpose-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0;
-  }
+.palette-list { display: flex; flex-direction: column; gap: 8px; }
+.palette-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border: 1px solid #e5e5e5; border-radius: 8px;
+  cursor: pointer; transition: border-color 0.15s; background: #fff;
+}
+.palette-item:hover { border-color: #C4956A; }
+.palette-item.selected { border-color: #C4956A; border-width: 2px; }
+.palette-swatches { display: flex; gap: 3px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; }
+.palette-info { flex: 1; }
+.palette-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+.palette-use { font-size: 11px; color: #888; }
+.palette-radio { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #ccc; flex-shrink: 0; }
+.palette-item.selected .palette-radio { background: #C4956A; border-color: #C4956A; }
 
-  .purpose-item {
-    padding: 18px 22px;
-    border-right: 1px solid var(--line);
-    cursor: pointer; transition: background 0.12s;
-    display: flex; flex-direction: column; gap: 8px;
-  }
+.divider { border: none; border-top: 1px solid #e5e5e5; margin: 1.5rem 0; }
 
-  .purpose-item:last-child { border-right: none; }
-  .purpose-item:hover { background: #FAFAF9; }
-  .purpose-item.selected { background: #F5F5F3; }
+.ref-zone {
+  border: 2px dashed #ccc; border-radius: 12px;
+  padding: 2rem; text-align: center; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  background: #f9f9f9; margin-bottom: 12px;
+}
+.ref-zone:hover { border-color: #C4956A; background: #FDF7F2; }
+.ref-zone-text { font-size: 13px; color: #888; }
+.ref-zone-sub { font-size: 12px; color: #aaa; margin-top: 4px; }
 
-  .purpose-top { display: flex; align-items: center; justify-content: space-between; }
+.ref-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.ref-card { border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden; background: #fff; }
+.ref-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.ref-body { padding: 8px 10px; }
+.ref-memo { font-size: 11px; color: #666; margin-bottom: 6px; width: 100%; border: 1px solid #e5e5e5; border-radius: 4px; padding: 4px 6px; background: #f9f9f9; resize: none; font-family: inherit; }
+.ref-actions { display: flex; gap: 6px; }
+.ref-gen-btn { flex: 1; font-size: 11px; padding: 5px 0; border-radius: 4px; border: 1px solid #C4956A; color: #C4956A; background: transparent; cursor: pointer; font-family: inherit; }
+.ref-gen-btn:hover { background: #FDF7F2; }
+.ref-gen-btn:disabled { color: #aaa; border-color: #ddd; cursor: default; }
+.ref-del-btn { font-size: 11px; padding: 5px 8px; border-radius: 4px; border: 1px solid #e5e5e5; color: #aaa; background: transparent; cursor: pointer; font-family: inherit; }
+.ref-del-btn:hover { border-color: #e55; color: #e55; }
+.ref-prompt-box { font-size: 11px; line-height: 1.5; color: #666; background: #f9f9f9; border: 1px solid #e5e5e5; border-radius: 4px; padding: 6px 8px; margin-top: 6px; white-space: pre-wrap; word-break: break-all; }
+.ref-prompt-copy { width: 100%; margin-top: 5px; font-size: 11px; padding: 5px; border-radius: 4px; border: 1px solid #C4956A; color: #C4956A; background: transparent; cursor: pointer; font-family: inherit; }
+.ref-prompt-copy:hover { background: #FDF7F2; }
 
-  .purpose-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted);
-  }
+.spinner { display: inline-block; width: 10px; height: 10px; border: 1.5px solid #ddd; border-top-color: #C4956A; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  .purpose-item.selected .purpose-tag { color: var(--coral); }
-
-  .purpose-badge {
-    font-size: 10px; font-weight: 600;
-    color: var(--muted); background: var(--soft);
-    padding: 2px 8px; border-radius: 100px;
-    border: 1px solid var(--line);
-  }
-
-  .purpose-name { font-size: 15px; font-weight: 800; color: var(--ink); }
-  .purpose-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
-
-  .purpose-recommend {
-    display: flex; gap: 6px; flex-wrap: wrap;
-    margin-top: 2px;
-  }
-
-  .rec-chip {
-    font-size: 10px; font-weight: 600;
-    padding: 2px 8px; border-radius: 100px;
-    border: 1px solid var(--line);
-    color: var(--body); background: var(--soft);
-  }
-
-  .selected-tick {
-    display: none;
-    width: 18px; height: 18px; border-radius: 50%;
-    background: var(--coral);
-    align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .purpose-item.selected .selected-tick { display: flex; }
-
-  /* ── 메인 레이아웃 ── */
-  .main { width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; }
-
-  /* 세트 그리드 */
-  .sets-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
-
-  .set-item {
-    padding: 14px 12px 16px; border-right: 1px solid var(--line);
-    cursor: pointer; transition: background 0.12s;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .set-item:last-child { border-right: none; }
-  .set-item:hover { background: #FAFAF9; }
-  .set-item.selected { background: #F5F5F3; }
-
-  .thumb {
-    width: 100%; aspect-ratio: 16/9; border-radius: 5px;
-    border: 1px solid var(--line); overflow: hidden;
-    position: relative; background: #fff; transition: box-shadow 0.12s;
-  }
-  .set-item.selected .thumb { border-color: var(--coral); box-shadow: 0 0 0 2px var(--coral-light); }
-  .thumb svg { width: 100%; height: 100%; }
-
-  .set-meta { display: flex; flex-direction: column; gap: 3px; }
-  .set-type { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .set-item.selected .set-type { color: var(--coral); }
-  .set-name { font-size: 12px; font-weight: 700; color: var(--ink); }
-  .set-desc { font-size: 10px; color: var(--muted); line-height: 1.4; }
-
-  .selected-tag {
-    display: none; font-size: 9px; font-weight: 700;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--coral); background: #FEF0EE;
-    padding: 2px 7px; border-radius: 100px; align-self: flex-start;
-  }
-  .set-item.selected .selected-tag { display: inline-flex; }
-
-  /* 팔레트 */
-  .palette-list { display: flex; flex-direction: column; }
-  .pal-item { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background 0.12s; }
-  .pal-item:last-child { border-bottom: none; }
-  .pal-item:hover { background: #FAFAF9; }
-  .pal-item.selected { background: #F5F5F3; }
-  .pal-swatches { display: flex; gap: 3px; flex-shrink: 0; }
-  .p-sw { width: 14px; height: 26px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.06); }
-  .pal-info { flex: 1; min-width: 0; }
-  .pal-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 1px; }
-  .pal-use { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pal-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
-  .pal-item.selected .pal-check { background: var(--coral); border-color: var(--coral); }
-  .pal-check svg { display: none; }
-  .pal-item.selected .pal-check svg { display: block; }
-
-  /* 토스트 */
-  .toast {
-    position: fixed; bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(12px);
-    background: var(--ink); color: #fff; font-size: 13px; font-weight: 500;
-    padding: 11px 22px; border-radius: 100px;
-    opacity: 0; transition: all 0.2s; pointer-events: none;
-    white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast {
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(10px);
+  background: #2C2C2C; color: #fff; padding: 10px 20px; border-radius: 8px;
+  font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 99;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
-
-<div class="header">
-  <div>
-    <h1>해보는 언니 — 슬라이드 가이드</h1>
-    <p>용도 → 세트 → 팔레트 순으로 선택하면 Claude용 슬라이드 제작 가이드가 한 번에 복사돼요.</p>
-  </div>
-  <button class="copy-btn" id="copyBtn" onclick="copyGuide()" disabled>
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="9" height="10" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M4 3V2.5A1.5 1.5 0 015.5 1h5A1.5 1.5 0 0112 2.5v8A1.5 1.5 0 0110.5 12H10" stroke="white" stroke-width="1.5"/></svg>
-    용도 + 세트 + 팔레트 복사
-  </button>
-</div>
-
-<!-- 상태 바 -->
-<div class="status-bar">
-  <div class="status-left">
-    <div class="status-item">
-      <span class="status-label">용도</span>
-      <span class="status-value empty" id="statusPurpose">선택 안 됨</span>
+<div class="db-wrap">
+  <div class="db-header">
+    <div>
+      <div class="db-title">해보는 언니 — 슬라이드 가이드</div>
+      <div class="db-subtitle">용도 → 세트 → 팔레트 순으로 선택하면 Claude용 슬라이드 제작 가이드가 한 번에 복사돼요.</div>
     </div>
-    <div class="status-sep"></div>
-    <div class="status-item">
-      <span class="status-label">세트</span>
-      <span class="status-value empty" id="statusSet">선택 안 됨</span>
-    </div>
-    <div class="status-sep"></div>
-    <div class="status-item">
-      <span class="status-label">팔레트</span>
-      <span class="status-value empty" id="statusPal">선택 안 됨</span>
-    </div>
-  </div>
-  <span class="status-hint">셋 다 선택하면 복사 버튼이 활성화돼요</span>
-</div>
-
-<!-- 용도 선택 -->
-<div class="panel purpose-panel">
-  <div class="panel-head">
-    <span class="panel-title">용도 선택</span>
-    <span class="panel-hint">클릭해서 선택</span>
-  </div>
-  <div class="purpose-grid">
-
-    <div class="purpose-item" onclick="selectPurpose('lecture')" id="purpose-lecture">
-      <div class="purpose-top">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="purpose-tag">강의자료</span>
-          <span class="purpose-badge">15~25장</span>
-        </div>
-        <div class="selected-tick">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>
-      <div class="purpose-name">강의 슬라이드</div>
-      <div class="purpose-desc">도입 → 이해 → 사례 → 참여 → 정리 흐름. 청중이 따라오도록 리듬감 있는 구성.</div>
-      <div class="purpose-recommend">
-        <span class="rec-chip">세트 A 추천</span>
-        <span class="rec-chip">세트 E 추천</span>
-        <span class="rec-chip">소프트 틸</span>
-        <span class="rec-chip">포레스트 그린</span>
-      </div>
-    </div>
-
-    <div class="purpose-item" onclick="selectPurpose('contest')" id="purpose-contest">
-      <div class="purpose-top">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="purpose-tag">공모전</span>
-          <span class="purpose-badge">5~7장</span>
-        </div>
-        <div class="selected-tick">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>
-      <div class="purpose-name">공모전 제출</div>
-      <div class="purpose-desc">짧고 강렬하게. 문제 → 아이디어 → 실행 → 기대효과 → 차별성 순으로 임팩트 있게.</div>
-      <div class="purpose-recommend">
-        <span class="rec-chip">세트 D 추천</span>
-        <span class="rec-chip">세트 E 추천</span>
-        <span class="rec-chip">차콜</span>
-        <span class="rec-chip">더스티 블루</span>
-      </div>
-    </div>
-
-    <div class="purpose-item" onclick="selectPurpose('proposal')" id="purpose-proposal">
-      <div class="purpose-top">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="purpose-tag">제안서</span>
-          <span class="purpose-badge">10~15장</span>
-        </div>
-        <div class="selected-tick">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>
-      <div class="purpose-name">제안서 · 사업계획서</div>
-      <div class="purpose-desc">논리성과 데이터 기반 설득. 문제 → 솔루션 → 실행계획 → 기대효과 순으로 타당성 강조.</div>
-      <div class="purpose-recommend">
-        <span class="rec-chip">세트 C 추천</span>
-        <span class="rec-chip">세트 B 추천</span>
-        <span class="rec-chip">더스티 블루</span>
-        <span class="rec-chip">차콜</span>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- 메인 -->
-<div class="main">
-
-  <!-- 세트 패널 -->
-  <div class="panel">
-    <div class="panel-head">
-      <span class="panel-title">슬라이드 세트</span>
-      <span class="panel-hint">클릭해서 선택</span>
-    </div>
-    <div class="sets-grid">
-
-      <div class="set-item" onclick="selectSet('A')" id="set-A">
-        <div class="thumb">
-          <svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg">
-            <rect width="160" height="90" fill="#fff"/>
-            <rect width="160" height="3" fill="#3D6B5E"/>
-            <circle cx="14" cy="14" r="3" fill="#E0877B"/>
-            <rect x="22" y="11" width="30" height="2.5" rx="1" fill="#DADADA"/>
-            <rect x="12" y="28" width="60" height="7" rx="2" fill="#1A1A1A"/>
-            <rect x="12" y="38" width="42" height="6" rx="2" fill="#E0877B"/>
-            <rect x="12" y="52" width="70" height="2" rx="1" fill="#E4E4E4"/>
-            <rect x="12" y="57" width="55" height="2" rx="1" fill="#E4E4E4"/>
-            <rect x="110" y="0" width="50" height="90" fill="#3D6B5E"/>
-            <rect x="120" y="55" width="28" height="3" rx="1" fill="rgba(255,255,255,0.4)"/>
-            <rect x="120" y="61" width="22" height="2" rx="1" fill="rgba(255,255,255,0.25)"/>
-            <rect x="120" y="66" width="25" height="2" rx="1" fill="rgba(255,255,255,0.25)"/>
-          </svg>
-        </div>
-        <div class="set-meta">
-          <div style="display:flex;align-items:center;gap:5px;"><span class="set-type">세트 A</span><span class="selected-tag">선택됨</span></div>
-          <div class="set-name">미니멀 라인</div>
-          <div class="set-desc">타이포그래피 중심, 깔끔한 선</div>
-        </div>
-      </div>
-
-      <div class="set-item" onclick="selectSet('B')" id="set-B">
-        <div class="thumb">
-          <svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg">
-            <rect width="160" height="90" fill="#F4F3F0"/>
-            <rect x="0" y="0" width="72" height="90" fill="#3D6B5E"/>
-            <circle cx="14" cy="14" r="3" fill="rgba(255,255,255,0.4)"/>
-            <rect x="12" y="30" width="48" height="6" rx="2" fill="rgba(255,255,255,0.9)"/>
-            <rect x="12" y="40" width="36" height="5" rx="2" fill="#E0877B"/>
-            <rect x="82" y="12" width="68" height="18" rx="4" fill="#fff"/>
-            <rect x="86" y="17" width="10" height="10" rx="3" fill="#E0EDEA"/>
-            <rect x="100" y="18" width="30" height="2.5" rx="1" fill="#DADADA"/>
-            <rect x="82" y="34" width="68" height="18" rx="4" fill="#fff"/>
-            <rect x="86" y="39" width="10" height="10" rx="3" fill="#F1CFC5"/>
-            <rect x="100" y="40" width="30" height="2.5" rx="1" fill="#DADADA"/>
-            <rect x="82" y="56" width="68" height="18" rx="4" fill="#fff"/>
-            <rect x="86" y="61" width="10" height="10" rx="3" fill="#E0EDEA"/>
-            <rect x="100" y="62" width="30" height="2.5" rx="1" fill="#DADADA"/>
-          </svg>
-        </div>
-        <div class="set-meta">
-          <div style="display:flex;align-items:center;gap:5px;"><span class="set-type">세트 B</span><span class="selected-tag">선택됨</span></div>
-          <div class="set-name">카드 + 아이콘</div>
-          <div class="set-desc">보드 위 카드, 입체감</div>
-        </div>
-      </div>
-
-      <div class="set-item" onclick="selectSet('C')" id="set-C">
-        <div class="thumb">
-          <svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg">
-            <rect width="160" height="90" fill="#fff"/>
-            <rect x="0" y="0" width="10" height="90" fill="#3D6B5E"/>
-            <circle cx="5" cy="10" r="2.5" fill="#F1CFC5"/>
-            <rect x="18" y="22" width="55" height="7" rx="2" fill="#1A1A1A"/>
-            <rect x="18" y="32" width="40" height="6" rx="2" fill="#E0877B"/>
-            <rect x="18" y="46" width="12" height="2" rx="1" fill="#3D6B5E"/>
-            <rect x="33" y="46" width="40" height="2" rx="1" fill="#DADADA"/>
-            <rect x="18" y="53" width="12" height="2" rx="1" fill="#3D6B5E"/>
-            <rect x="33" y="53" width="40" height="2" rx="1" fill="#DADADA"/>
-            <rect x="90" y="14" width="60" height="60" rx="4" fill="#F7F7F6" stroke="#E4E4E4" stroke-width="0.5"/>
-            <rect x="93" y="30" width="20" height="2" rx="1" fill="#DADADA"/>
-            <rect x="93" y="38" width="20" height="2" rx="1" fill="#DADADA"/>
-            <rect x="118" y="30" width="28" height="2" rx="1" fill="#EEEEEE"/>
-            <rect x="118" y="38" width="28" height="2" rx="1" fill="#EEEEEE"/>
-          </svg>
-        </div>
-        <div class="set-meta">
-          <div style="display:flex;align-items:center;gap:5px;"><span class="set-type">세트 C</span><span class="selected-tag">선택됨</span></div>
-          <div class="set-name">매거진</div>
-          <div class="set-desc">세로 사이드바, 정보 테이블</div>
-        </div>
-      </div>
-
-      <div class="set-item" onclick="selectSet('D')" id="set-D">
-        <div class="thumb">
-          <svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg">
-            <rect width="160" height="90" fill="#1A1A1A"/>
-            <polygon points="72,0 160,0 160,90 52,90" fill="#3D6B5E"/>
-            <rect x="0" y="85" width="60" height="5" fill="#E0877B"/>
-            <circle cx="13" cy="13" r="3" fill="#E0877B"/>
-            <rect x="12" y="32" width="48" height="6" rx="2" fill="rgba(255,255,255,0.9)"/>
-            <rect x="12" y="41" width="36" height="5" rx="2" fill="#E0877B"/>
-            <rect x="88" y="52" width="40" height="3" rx="1" fill="rgba(255,255,255,0.6)"/>
-            <rect x="88" y="58" width="32" height="2.5" rx="1" fill="rgba(255,255,255,0.4)"/>
-            <rect x="88" y="63" width="36" height="2.5" rx="1" fill="rgba(255,255,255,0.4)"/>
-          </svg>
-        </div>
-        <div class="set-meta">
-          <div style="display:flex;align-items:center;gap:5px;"><span class="set-type">세트 D</span><span class="selected-tag">선택됨</span></div>
-          <div class="set-name">다이나믹</div>
-          <div class="set-desc">다크 배경, 대각선 대비</div>
-        </div>
-      </div>
-
-      <div class="set-item" onclick="selectSet('E')" id="set-E">
-        <div class="thumb">
-          <svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg">
-            <rect width="160" height="90" fill="#fff"/>
-            <circle cx="120" cy="45" r="34" fill="#E0EDEA" opacity="0.6"/>
-            <circle cx="120" cy="45" r="22" fill="none" stroke="#3D6B5E" stroke-width="0.75" opacity="0.3"/>
-            <circle cx="120" cy="45" r="10" fill="#3D6B5E" opacity="0.15"/>
-            <circle cx="98" cy="22" r="8" fill="#E0877B" opacity="0.2"/>
-            <polygon points="0,90 22,90 0,68" fill="#E0EDEA" opacity="0.8"/>
-            <rect x="12" y="22" width="55" height="7" rx="2" fill="#1A1A1A"/>
-            <rect x="12" y="32" width="38" height="5" rx="2" fill="#E0877B"/>
-          </svg>
-        </div>
-        <div class="set-meta">
-          <div style="display:flex;align-items:center;gap:5px;"><span class="set-type">세트 E</span><span class="selected-tag">선택됨</span></div>
-          <div class="set-name">기하학</div>
-          <div class="set-desc">도형 패턴, 구조적 느낌</div>
-        </div>
-      </div>
-
+    <div style="display:flex;flex-direction:column;align-items:flex-end;">
+      <button class="copy-btn-main" id="mainCopyBtn" onclick="copyAll()">📋 용도 + 세트 + 팔레트 복사</button>
+      <div class="storage-badge"><div class="storage-dot" id="storageDot"></div><span id="storageLabel">저장소 연결 중...</span></div>
     </div>
   </div>
 
-  <!-- 팔레트 패널 -->
-  <div class="panel">
-    <div class="panel-head"><span class="panel-title">컬러 팔레트</span></div>
-    <div class="palette-list">
-      <div class="pal-item" onclick="selectPal('mustard')" id="pal-mustard">
-        <div class="pal-swatches"><div class="p-sw" style="background:#C4956A;"></div><div class="p-sw" style="background:#F7EDE0;"></div><div class="p-sw" style="background:#E0877B;"></div></div>
-        <div class="pal-info"><div class="pal-name">머스터드</div><div class="pal-use">채널 · 브랜드 콘텐츠</div></div>
-        <div class="pal-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="pal-item" onclick="selectPal('teal')" id="pal-teal">
-        <div class="pal-swatches"><div class="p-sw" style="background:#4A9090;"></div><div class="p-sw" style="background:#E0F0F0;"></div><div class="p-sw" style="background:#E0877B;"></div></div>
-        <div class="pal-info"><div class="pal-name">소프트 틸</div><div class="pal-use">세련된 강의 · 포트폴리오</div></div>
-        <div class="pal-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="pal-item" onclick="selectPal('forest')" id="pal-forest">
-        <div class="pal-swatches"><div class="p-sw" style="background:#3D6B5E;"></div><div class="p-sw" style="background:#E0EDEA;"></div><div class="p-sw" style="background:#E0877B;"></div></div>
-        <div class="pal-info"><div class="pal-name">포레스트 그린</div><div class="pal-use">평생교육원 · 지역 강의</div></div>
-        <div class="pal-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="pal-item" onclick="selectPal('blue')" id="pal-blue">
-        <div class="pal-swatches"><div class="p-sw" style="background:#5B7FA6;"></div><div class="p-sw" style="background:#E0EAF4;"></div><div class="p-sw" style="background:#E0877B;"></div></div>
-        <div class="pal-info"><div class="pal-name">더스티 블루</div><div class="pal-use">공공기관 · 디지털배움터</div></div>
-        <div class="pal-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="pal-item" onclick="selectPal('charcoal')" id="pal-charcoal">
-        <div class="pal-swatches"><div class="p-sw" style="background:#2C2C2C;"></div><div class="p-sw" style="background:#EFEFEF; border:1px solid #ddd;"></div><div class="p-sw" style="background:#E0877B;"></div></div>
-        <div class="pal-info"><div class="pal-name">차콜</div><div class="pal-use">공식 제안서 · 공모전</div></div>
-        <div class="pal-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="status-bar">
+    <div class="status-item"><div class="status-dot" id="dot1"></div><span id="st1">용도 선택 안 됨</span></div>
+    <span class="status-sep">|</span>
+    <div class="status-item"><div class="status-dot" id="dot2"></div><span id="st2">세트 선택 안 됨</span></div>
+    <span class="status-sep">|</span>
+    <div class="status-item"><div class="status-dot" id="dot3"></div><span id="st3">팔레트 선택 안 됨</span></div>
+    <span class="status-hint">셋 다 선택하면 복사 버튼이 활성화돼요</span>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">용도 선택</div><div class="section-hint">클릭해서 선택</div></div>
+    <div class="purpose-grid" id="purposeGrid"></div>
+  </div>
+
+  <div class="main-grid">
+    <div class="section">
+      <div class="section-header"><div class="section-title">슬라이드 세트</div><div class="section-hint">클릭해서 선택</div></div>
+      <div class="set-grid" id="setGrid"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">컬러 팔레트</div></div>
+      <div class="palette-list" id="paletteList"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">내 레퍼런스 보관함</div>
+        <div style="font-size:12px;color:#aaa;margin-top:3px;">마음에 드는 PPT 캡처 이미지를 붙여넣으면 스타일 프롬프트를 자동 생성해드려요.</div>
       </div>
     </div>
+    <div class="ref-zone" id="refZone" tabindex="0">
+      <div style="font-size:28px;margin-bottom:8px;">📋</div>
+      <div class="ref-zone-text">여기를 클릭 후 Ctrl+V로 이미지 붙여넣기</div>
+      <div class="ref-zone-sub">캡처한 PPT 이미지를 분석해서 프롬프트를 만들어드려요.</div>
+    </div>
+    <div class="ref-grid" id="refGrid"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-let selPurpose = null, selSet = null, selPal = null;
+const purposes = [
+  { id:'lecture', label:'강의자료', count:'15~25장', title:'강의 슬라이드', desc:'도입 → 이해 → 사례 → 참여 → 정리 흐름. 청중이 따라오도록 리듬감 있는 구성.', sets:['세트 A 추천','세트 E 추천'], moods:['소프트 틸','포레스트 그린'], structure:'Cover → 오프닝 질문 → 오늘의 목표 → 배경 설명(3장) → 핵심 개념(6장) → 사례/시연(4장) → 참여 활동(2장) → 핵심 정리 → Q&A/Closing' },
+  { id:'contest', label:'공모전', count:'5~7장', title:'공모전 제출', desc:'짧고 강렬하게. 문제 → 아이디어 → 실행 → 기대효과 → 차별성 순으로 임팩트 있게.', sets:['세트 D 추천','세트 E 추천'], moods:['차콜','더스티 블루'], structure:'Cover → 문제 정의 → 아이디어 소개 → 실행 방식 → 기대 효과 → 차별성/경쟁력 → Closing' },
+  { id:'proposal', label:'제안서', count:'10~15장', title:'제안서·사업계획서', desc:'논리성과 데이터 기반 설득. 문제 → 솔루션 → 실행계획 → 기대효과 순으로 타당성 강조.', sets:['세트 C 추천','세트 B 추천'], moods:['더스티 블루','차콜'], structure:'Cover → Executive Summary → 문제 정의 → 시장·환경 분석 → 제안 솔루션 → 실행 계획 → 조직·운영 체계 → 예산·자원 계획 → 기대 효과 → Closing' }
+];
+const sets = [
+  { id:'a', num:'세트 A', name:'미니멀 라인', desc:'타이포그래피 중심, 깔끔한 선', c1:'#F5F5F5', c2:'#E0877B', c3:'#2C2C2C' },
+  { id:'b', num:'세트 B', name:'카드 + 아이콘', desc:'보드 위 카드, 입체감', c1:'#3D6B5E', c2:'#E0877B', c3:'#FFFFFF' },
+  { id:'c', num:'세트 C', name:'매거진', desc:'세로 사이드바, 정보 테이블', c1:'#5B7FA6', c2:'#E0877B', c3:'#F5F5F5' },
+  { id:'d', num:'세트 D', name:'다이나믹', desc:'다크 배경, 대각선 대비', c1:'#1A1A2E', c2:'#E0877B', c3:'#FFFFFF' },
+  { id:'e', num:'세트 E', name:'기하학', desc:'도형 패턴, 구조적 느낌', c1:'#F7EDE0', c2:'#C4956A', c3:'#2C2C2C' }
+];
+const palettes = [
+  { id:'mustard', name:'머스터드', use:'채널 · 브랜드 콘텐츠', main:'#C4956A', bg:'#F7EDE0', point:'#E0877B', text:'#2C2C2C' },
+  { id:'teal', name:'소프트 틸', use:'세련된 강의 · 포트폴리오', main:'#4A9090', bg:'#E0F0F0', point:'#E0877B', text:'#2C2C2C' },
+  { id:'forest', name:'포레스트 그린', use:'평생교육원 · 지역 강의', main:'#3D6B5E', bg:'#E0EDEA', point:'#E0877B', text:'#2C2C2C' },
+  { id:'blue', name:'더스티 블루', use:'공공기관 · 디지털배움터', main:'#5B7FA6', bg:'#E0EAF4', point:'#E0877B', text:'#2C2C2C' },
+  { id:'charcoal', name:'차콜', use:'공식 제안서 · 공모전', main:'#2C2C2C', bg:'#EFEFEF', point:'#E0877B', text:'#FFFFFF' }
+];
 
-const purposeNames = { lecture:'강의 슬라이드', contest:'공모전 제출', proposal:'제안서·사업계획서' };
-const setNames = { A:'미니멀 라인', B:'카드+아이콘', C:'매거진', D:'다이나믹', E:'기하학' };
-const palNames = { mustard:'머스터드', teal:'소프트 틸', forest:'포레스트 그린', blue:'더스티 블루', charcoal:'차콜' };
+let sel = { purpose:null, set:null, palette:null };
+let refs = [];
 
-const purposeGuides = {
-  lecture: `【슬라이드 용도 — 강의 슬라이드】
-권장 장수: 15~25장 / 1시간 분량
-목표: 청중이 지루하지 않게 흐름을 따라오도록 설계
-핵심: 스토리텔링, 리듬감, 시각자료 활용
-
-● 슬라이드 뼈대 (순서대로)
-1. Cover — 강의 제목, 강사명
-2. 오프닝 질문 — 청중 관심 유도
-3. 오늘의 목표 — 학습 목표 3개 이내
-4~6. 배경 설명 — 왜 이 주제가 중요한가
-7~12. 핵심 개념 — 주요 개념·원리 설명
-13~16. 사례 / 시연 — 실제 적용 사례, 데모
-17~18. 참여 활동 — 질문, 토론, 실습
-19. 핵심 정리 — 오늘 배운 내용 요약
-20. Q&A / Closing — 질문과 마무리 메시지
-
-● 디자인 규칙
-- 텍스트보다 키워드 중심으로 작성
-- 한 슬라이드에 3~5개 포인트만
-- 큰 글씨, 넓은 여백
-- 1슬라이드 = 1메시지`,
-
-  contest: `【슬라이드 용도 — 공모전 제출】
-권장 장수: 5~7장
-목표: 짧은 시간 안에 차별성과 실행 가능성 전달
-핵심: 간결함, 임팩트, 차별화
-
-● 슬라이드 뼈대 (순서대로)
-1. Cover — 프로젝트명, 팀명, 한 줄 슬로건
-2. 문제 정의 — 현재 문제와 왜 중요한지 (공감 형성)
-3. 아이디어 소개 — 핵심 솔루션 (차별성과 직관성)
-4. 실행 방식 — 운영 구조, 서비스 흐름 (실현 가능성)
-5. 기대 효과 — 정량·정성 효과, 사회적 가치
-6. 차별성 / 경쟁력 — 기존 방식과의 비교
-7. Closing — 한 줄 메시지 + 감사합니다
-
-● 디자인 규칙
-- 1슬라이드 1메시지 엄격하게
-- 숫자와 키워드 크게 강조
-- 표보다 인포그래픽 우선
-- 텍스트 매우 적게`,
-
-  proposal: `【슬라이드 용도 — 제안서·사업계획서】
-권장 장수: 10~15장
-목표: 문제 해결 능력과 사업 타당성을 논리적으로 설득
-핵심: 논리성, 데이터, 실행 계획
-
-● 슬라이드 뼈대 (순서대로)
-1. Cover — 제안 제목, 기관·회사명
-2. Executive Summary — 제안 핵심 요약
-3. 문제 정의 — 현황과 문제점 분석
-4. 시장·환경 분석 — 데이터, 트렌드, 대상 분석
-5. 제안 솔루션 — 핵심 아이디어와 운영 방식
-6. 실행 계획 — 단계별 추진 일정
-7. 조직·운영 체계 — 역할 분담, 운영 구조
-8. 예산·자원 계획 — 비용과 활용 계획
-9. 기대 효과 — 정량·정성 성과
-10. Closing — 핵심 메시지와 제안 마무리
-
-● 디자인 규칙
-- 논리 흐름이 가장 중요
-- 차트와 데이터는 간결하게
-- 본문 텍스트 3줄 이내로 압축
-- 표지와 섹션 슬라이드는 브랜드 톤 유지`
-};
-
-const setGuides = {
-  A:`【슬라이드 세트 A — 미니멀 라인】
-스타일: 타이포그래피 중심, 얇은 라인, 여백 과감
-분위기: 깔끔하고 세련됨
-
-● 레이아웃 구성
-- D형(표지): 좌측 텍스트 + 우측 무드 컬러 블록
-- B형(인포+텍스트): 좌측 라인 리스트 + 우측 불릿 텍스트
-- C형(텍스트중심): 상단 제목 + 하단 4컬럼 (얇은 구분선)
-- A형(플로우): 상단 라인 + 큰 번호 + 설명`,
-
-  B:`【슬라이드 세트 B — 카드 + 아이콘】
-스타일: 카드 위에 콘텐츠, 아이콘 활용, 약간의 그림자
-분위기: 친근하고 접근하기 쉬움
-
-● 레이아웃 구성
-- D형(표지): 좌측 다크 컬러 블록 + 우측 목차 카드 리스트
-- B형(인포+텍스트): 카드 3개 나열 + 하단 핵심 배너
-- C형(텍스트중심): 2×2 카드 그리드 + 아이콘
-- A형(플로우): 카드 5개 가로 배치 + 화살표`,
-
-  C:`【슬라이드 세트 C — 매거진】
-스타일: 좌측 세로 사이드바, 정보 테이블, 편집 디자인 느낌
-분위기: 세련되고 정돈됨
-
-● 레이아웃 구성
-- D형(표지): 세로 사이드바 + 중앙 큰 제목 + 우측 정보 테이블
-- B형(인포+텍스트): 사이드바 + 좌측 세로 리스트 + 우측 번호 포인트
-- C형(텍스트중심): 사이드바 + 상단 제목 + 하단 4컬럼
-- A형(플로우): 사이드바 + 원형 노드 + 연결선`,
-
-  D:`【슬라이드 세트 D — 다이나믹】
-스타일: 다크 배경, 대각선 컬러 블록, 강한 명암 대비
-분위기: 강렬하고 임팩트 있음
-
-● 레이아웃 구성
-- D형(표지): 다크 배경 + 대각선 무드 컬러 블록
-- B형(인포+텍스트): 좌측 다크 패널 + 우측 화이트 포인트
-- C형(텍스트중심): 상단 다크 헤더 바 + 하단 4컬럼
-- A형(플로우): 상단 무드 헤더 바 + 하단 5단계 칸 분할`,
-
-  E:`【슬라이드 세트 E — 기하학】
-스타일: 원/삼각형/육각형 도형을 배경 장식으로 활용
-분위기: 구조적이고 현대적
-
-● 레이아웃 구성
-- D형(표지): 배경 동심원 도형 + 좌측 제목 + 우측 원형 장식
-- B형(인포+텍스트): 배경 도형 + 좌측 리스트 + 우측 도형 아이콘 포인트
-- C형(텍스트중심): 배경 도형 + 상단 제목 + 도형 번호 4컬럼
-- A형(플로우): 배경 도형 + 육각형 노드 5단계`
-};
-
-const palGuides = {
-  mustard:`【컬러 팔레트 — 머스터드】
-- 메인 컬러: #C4956A / 배경 패널: #F7EDE0 / 소제목: #8C6240
-- 포인트 강조 (슬라이드당 1곳): #E0877B
-- 제목: #1A1A1A / 본문: #4A4A4A / 배경: #FFFFFF`,
-
-  teal:`【컬러 팔레트 — 소프트 틸】
-- 메인 컬러: #4A9090 / 배경 패널: #E0F0F0 / 소제목: #2E6464
-- 포인트 강조 (슬라이드당 1곳): #E0877B
-- 제목: #1A1A1A / 본문: #4A4A4A / 배경: #FFFFFF`,
-
-  forest:`【컬러 팔레트 — 포레스트 그린】
-- 메인 컬러: #3D6B5E / 배경 패널: #E0EDEA / 소제목: #284840
-- 포인트 강조 (슬라이드당 1곳): #E0877B
-- 제목: #1A1A1A / 본문: #4A4A4A / 배경: #FFFFFF`,
-
-  blue:`【컬러 팔레트 — 더스티 블루】
-- 메인 컬러: #5B7FA6 / 배경 패널: #E0EAF4 / 소제목: #3A567A
-- 포인트 강조 (슬라이드당 1곳): #E0877B
-- 제목: #1A1A1A / 본문: #4A4A4A / 배경: #FFFFFF`,
-
-  charcoal:`【컬러 팔레트 — 차콜】
-- 메인 컬러: #2C2C2C / 배경 패널: #EFEFEF / 소제목: #000000
-- 포인트 강조 (슬라이드당 1곳): #E0877B
-- 제목: #1A1A1A / 본문: #4A4A4A / 배경: #FFFFFF`
-};
-
-function selectPurpose(key) {
-  document.querySelectorAll('.purpose-item').forEach(el => el.classList.remove('selected'));
-  document.getElementById('purpose-'+key).classList.add('selected');
-  selPurpose = key;
-  document.getElementById('statusPurpose').textContent = purposeNames[key];
-  document.getElementById('statusPurpose').classList.remove('empty');
-  updateBtn();
+function loadLocal() {
+  try {
+    const s = localStorage.getItem('haeboneun-sel');
+    if (s) { sel = JSON.parse(s); }
+    const r = localStorage.getItem('haeboneun-refs');
+    if (r) { refs = JSON.parse(r); }
+  } catch(e) {}
+  renderPurpose(); renderSets(); renderPalettes(); updateStatus(); renderRefs();
 }
 
-function selectSet(key) {
-  document.querySelectorAll('.set-item').forEach(el => el.classList.remove('selected'));
-  document.getElementById('set-'+key).classList.add('selected');
-  selSet = key;
-  document.getElementById('statusSet').textContent = setNames[key];
-  document.getElementById('statusSet').classList.remove('empty');
-  updateBtn();
+function saveSel() {
+  try { localStorage.setItem('haeboneun-sel', JSON.stringify(sel)); } catch(e) {}
+}
+function saveRefs() {
+  try { localStorage.setItem('haeboneun-refs', JSON.stringify(refs.map(r=>({id:r.id,dataUrl:r.dataUrl,memo:r.memo,prompt:r.prompt})))); } catch(e) {}
 }
 
-function selectPal(key) {
-  document.querySelectorAll('.pal-item').forEach(el => el.classList.remove('selected'));
-  document.getElementById('pal-'+key).classList.add('selected');
-  selPal = key;
-  document.getElementById('statusPal').textContent = palNames[key];
-  document.getElementById('statusPal').classList.remove('empty');
-  updateBtn();
+function makeThumb(s) {
+  return `<svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+    <rect width="160" height="90" fill="${s.c1}"/>
+    ${s.id==='a'?`<rect x="12" y="28" width="60" height="4" rx="2" fill="${s.c3}" opacity="0.8"/><rect x="12" y="38" width="40" height="3" rx="1.5" fill="${s.c3}" opacity="0.4"/><rect x="12" y="60" width="30" height="2" rx="1" fill="${s.c2}"/><line x1="0" y1="22" x2="160" y2="22" stroke="${s.c2}" stroke-width="1.5"/>`:
+    s.id==='b'?`<rect x="10" y="14" width="65" height="62" rx="4" fill="rgba(255,255,255,0.15)"/><rect x="85" y="14" width="65" height="28" rx="4" fill="rgba(255,255,255,0.15)"/><circle cx="30" cy="35" r="8" fill="${s.c2}" opacity="0.9"/>`:
+    s.id==='c'?`<rect x="0" y="0" width="35" height="90" fill="#4A6E94"/><rect x="4" y="20" width="27" height="3" rx="1.5" fill="rgba(255,255,255,0.9)"/><rect x="42" y="18" width="100" height="5" rx="2" fill="${s.c3}" opacity="0.8"/>`:
+    s.id==='d'?`<polygon points="80,0 160,0 160,90" fill="rgba(255,255,255,0.06)"/><rect x="12" y="28" width="70" height="6" rx="3" fill="${s.c2}"/><circle cx="130" cy="45" r="20" fill="rgba(255,255,255,0.05)" stroke="${s.c2}" stroke-width="1"/>`:
+    `<polygon points="0,0 50,0 0,50" fill="${s.c2}" opacity="0.3"/><polygon points="160,90 110,90 160,40" fill="${s.c2}" opacity="0.2"/><rect x="20" y="30" width="70" height="5" rx="2.5" fill="${s.c3}" opacity="0.8"/><circle cx="125" cy="45" r="16" fill="${s.c2}" opacity="0.2"/>`}
+  </svg>`;
 }
 
-function updateBtn() {
-  document.getElementById('copyBtn').disabled = !(selPurpose && selSet && selPal);
+function renderPurpose() {
+  document.getElementById('purposeGrid').innerHTML = purposes.map(p=>`
+    <div class="purpose-card ${sel.purpose===p.id?'selected':''}" onclick="selectPurpose('${p.id}')">
+      <div class="purpose-badge"><span class="badge-label">${p.label}</span><span class="badge-count">${p.count}</span></div>
+      <div class="purpose-title">${p.title}</div>
+      <div class="purpose-desc">${p.desc}</div>
+      <div class="purpose-tags">${p.sets.map(s=>`<span class="tag">${s}</span>`).join('')}${p.moods.map(m=>`<span class="tag mood">${m}</span>`).join('')}</div>
+    </div>`).join('');
+}
+function renderSets() {
+  document.getElementById('setGrid').innerHTML = sets.map(s=>`
+    <div class="set-card ${sel.set===s.id?'selected':''}" onclick="selectSet('${s.id}')">
+      <div class="set-thumb">${makeThumb(s)}</div>
+      <div class="set-num">${s.num}</div>
+      <div class="set-name">${s.name}</div>
+      <div class="set-desc">${s.desc}</div>
+    </div>`).join('');
+}
+function renderPalettes() {
+  document.getElementById('paletteList').innerHTML = palettes.map(p=>`
+    <div class="palette-item ${sel.palette===p.id?'selected':''}" onclick="selectPalette('${p.id}')">
+      <div class="palette-swatches">
+        <div class="swatch" style="background:${p.main}"></div>
+        <div class="swatch" style="background:${p.bg}"></div>
+        <div class="swatch" style="background:${p.point}"></div>
+      </div>
+      <div class="palette-info"><div class="palette-name">${p.name}</div><div class="palette-use">${p.use}</div></div>
+      <div class="palette-radio"></div>
+    </div>`).join('');
 }
 
-function copyGuide() {
-  if (!selPurpose || !selSet || !selPal) return;
-  const text = purposeGuides[selPurpose] + '\n\n' + setGuides[selSet] + '\n\n' + palGuides[selPal] + `\n\n● 사용 방법\n위 가이드를 참고하여 아래 내용으로 슬라이드를 만들어주세요.\n슬라이드 뼈대 순서를 지키고, 세트 스타일과 컬러를 적용해주세요.\n\n[여기에 노트북LM 출력 내용 또는 강의 내용을 붙여넣으세요]`;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.classList.add('done');
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> 복사 완료!`;
-    showToast('Claude 채팅창에 붙여넣고 내용을 추가하세요 ✓');
-    setTimeout(() => {
-      btn.classList.remove('done');
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="9" height="10" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M4 3V2.5A1.5 1.5 0 015.5 1h5A1.5 1.5 0 0112 2.5v8A1.5 1.5 0 0110.5 12H10" stroke="white" stroke-width="1.5"/></svg> 용도 + 세트 + 팔레트 복사`;
-    }, 2500);
-  });
+function selectPurpose(id) { sel.purpose=id; renderPurpose(); updateStatus(); saveSel(); }
+function selectSet(id) { sel.set=id; renderSets(); updateStatus(); saveSel(); }
+function selectPalette(id) { sel.palette=id; renderPalettes(); updateStatus(); saveSel(); }
+
+function updateStatus() {
+  const p=purposes.find(x=>x.id===sel.purpose);
+  const s=sets.find(x=>x.id===sel.set);
+  const pal=palettes.find(x=>x.id===sel.palette);
+  document.getElementById('st1').textContent=p?p.title:'용도 선택 안 됨';
+  document.getElementById('st2').textContent=s?s.name:'세트 선택 안 됨';
+  document.getElementById('st3').textContent=pal?pal.name:'팔레트 선택 안 됨';
+  document.getElementById('dot1').className='status-dot'+(p?' selected':'');
+  document.getElementById('dot2').className='status-dot'+(s?' selected':'');
+  document.getElementById('dot3').className='status-dot'+(pal?' selected':'');
+  document.getElementById('mainCopyBtn').className='copy-btn-main'+(p&&s&&pal?' active':'');
+}
+
+function buildPrompt() {
+  const p=purposes.find(x=>x.id===sel.purpose);
+  const s=sets.find(x=>x.id===sel.set);
+  const pal=palettes.find(x=>x.id===sel.palette);
+  if(!p||!s||!pal) return '';
+  return `[해보는 언니 슬라이드 제작 가이드]\n\n■ 용도: ${p.title} (${p.count})\n■ 슬라이드 구성: ${p.structure}\n\n■ 세트: ${s.num} — ${s.name}\n스타일 특징: ${s.desc}\n\n■ 컬러 팔레트: ${pal.name}\n- 메인 컬러: ${pal.main}\n- 배경 패널: ${pal.bg}\n- 포인트(코랄): ${pal.point} — 슬라이드당 1곳만\n- 텍스트: ${pal.text}\n- 추천 용도: ${pal.use}\n\n■ 디자인 원칙\n- 1슬라이드 = 1메시지, 여백 넉넉하게\n- 텍스트 최소화, 키워드 위주\n- 폰트: Pretendard (제목 800 / 본문 400)\n- 코랄(${pal.point})은 슬라이드당 딱 1곳만 사용\n\n위 가이드에 맞춰 HTML 슬라이드를 만들어주세요.`;
+}
+
+function copyAll() {
+  const text=buildPrompt();
+  if(!text) return;
+  navigator.clipboard.writeText(text).then(()=>showToast('프롬프트 복사 완료! Claude에 붙여넣기 하세요 ✓'));
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
 }
+
+document.addEventListener('paste', async(e)=>{
+  const items=e.clipboardData?.items;
+  if(!items) return;
+  for(const item of items){
+    if(item.type.startsWith('image/')){
+      const file=item.getAsFile();
+      const reader=new FileReader();
+      reader.onload=(ev)=>addRef(ev.target.result);
+      reader.readAsDataURL(file);
+      break;
+    }
+  }
+});
+
+function addRef(dataUrl) {
+  refs.push({id:Date.now(), dataUrl, memo:'', prompt:null, loading:false});
+  saveRefs(); renderRefs();
+  showToast('이미지 저장됐어요! 프롬프트 생성 버튼을 눌러보세요.');
+}
+function removeRef(id) { refs=refs.filter(r=>r.id!==id); saveRefs(); renderRefs(); }
+
+async function generatePrompt(id) {
+  const ref=refs.find(r=>r.id===id);
+  if(!ref||ref.loading) return;
+  ref.loading=true; renderRefs();
+  try {
+    const base64=ref.dataUrl.split(',')[1];
+    const mediaType=ref.dataUrl.split(';')[0].split(':')[1];
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:'이 슬라이드/PPT 이미지의 디자인 스타일을 분석해서, AI에게 "이 스타일로 슬라이드를 만들어달라"고 요청하는 프롬프트를 한국어로 작성해줘. 레이아웃, 색상, 타이포그래피, 구성 요소의 특징을 구체적으로 담아줘. 프롬프트만 출력해줘 (설명 없이).'}
+        ]}]
+      })
+    });
+    const data=await res.json();
+    ref.prompt=data.content?.[0]?.text||'분석 결과를 가져오지 못했어요.';
+  } catch(e) { ref.prompt='오류가 발생했어요. 다시 시도해주세요.'; }
+  ref.loading=false; saveRefs(); renderRefs();
+}
+
+function updateMemo(id,val) {
+  const ref=refs.find(r=>r.id===id);
+  if(ref){ref.memo=val; saveRefs();}
+}
+function copyRefPrompt(id) {
+  const ref=refs.find(r=>r.id===id);
+  if(ref?.prompt) navigator.clipboard.writeText(ref.prompt).then(()=>showToast('레퍼런스 프롬프트 복사 완료!'));
+}
+
+function renderRefs() {
+  const g=document.getElementById('refGrid');
+  if(!refs.length){g.innerHTML='';return;}
+  g.innerHTML=refs.map(r=>`
+    <div class="ref-card">
+      <img class="ref-img" src="${r.dataUrl}" alt="레퍼런스">
+      <div class="ref-body">
+        <textarea class="ref-memo" rows="2" placeholder="메모 (선택)" onchange="updateMemo(${r.id},this.value)">${r.memo||''}</textarea>
+        <div class="ref-actions">
+          <button class="ref-gen-btn" onclick="generatePrompt(${r.id})" ${r.loading?'disabled':''}>
+            ${r.loading?'<span class="spinner"></span> 분석 중...':r.prompt?'재생성':'프롬프트 생성'}
+          </button>
+          <button class="ref-del-btn" onclick="removeRef(${r.id})">🗑</button>
+        </div>
+        ${r.prompt?`<div class="ref-prompt-box">${r.prompt.substring(0,200)}${r.prompt.length>200?'...':''}</div><button class="ref-prompt-copy" onclick="copyRefPrompt(${r.id})">📋 프롬프트 복사</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// localStorage 기반 저장 (Chrome에서 열 때 작동)
+document.getElementById('storageDot').className='storage-dot ok';
+document.getElementById('storageLabel').textContent='선택 내역 자동 저장됨 (localStorage)';
+loadLocal();
 </script>
 </body>
 </html>
